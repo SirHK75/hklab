@@ -1,0 +1,24 @@
+<div class="s-layout">
+    <!-- Sidebar -->
+    <div class="s-layout__sidebar">
+        <span class="s-sidebar__trigger">
+            <i class="fa fa-bars"></i>
+            <em>HK Labs</em>
+        </span>
+    
+        <nav class="s-sidebar__nav">
+            <div>
+                <ng-container *ngFor="let item of menuItems">
+                    <span class="s-sidebar__nav-link" [routerLink]="item.route">
+                        <i [class]="item.icon"></i><em>{{item.name}}</em>                        
+                    </span>
+                </ng-container>
+            </div>
+        </nav>
+    </div>
+    
+    <!-- Content -->
+    <main class="s-layout__content">
+        <router-outlet></router-outlet>
+    </main>
+</div>
