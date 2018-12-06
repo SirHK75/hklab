@@ -19,9 +19,24 @@ export class SideBarLayoutComponent {
     //   route: '/documentation'
     // },
     {
+      name: 'Pipes',
+      icon: 'fas fa-filter',
+      route: '/pipes'
+    },
+    {
+      name: 'Directives',
+      icon: 'fas fa-exchange-alt',
+      route: '/directives'
+    },
+    {
       name: 'Bootstrap',
       icon: 'fab fa-css3',
       route: '/bootstrap'
+    },
+    {
+      name: 'Biker',
+      icon: 'fas fa-bicycle',
+      route: '/biker'
     },
     {
       name: 'Test',

@@ -9,6 +9,9 @@ import { SideBarLayoutComponent } from './layouts/sidebar/sidebar.component';
 import { HomeComponent } from './components/home/home.component';
 import { BootstrapComponent } from './components/bootstrap/bootstrap.component';
 import { TestComponent } from './components/test/test.component';
+import { BikerComponent } from './components/biker/biker.component';
+import { PipesComponent } from './components/pipes/pipes.component';
+import { DirectivesComponent } from './components/directives/directives.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -29,8 +32,26 @@ const routes: Routes = [
         // canActivate: [AuthGuard],
       },
       {
+        path: 'pipes',
+        component: PipesComponent,
+        pathMatch: 'full',
+        // canActivate: [AuthGuard],
+      },
+      {
+        path: 'directives',
+        component: DirectivesComponent,
+        pathMatch: 'full',
+        // canActivate: [AuthGuard],
+      },
+      {
         path: 'bootstrap',
         component: BootstrapComponent,
+        pathMatch: 'full',
+        // canActivate: [AuthGuard],
+      },
+      {
+        path: 'biker',
+        component: BikerComponent,
         pathMatch: 'full',
         // canActivate: [AuthGuard],
       },

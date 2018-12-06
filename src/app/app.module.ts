@@ -5,7 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { RouterModule } from '@angular/router';
+
+// pipes
+import { PipesModule } from './pipes/pipes.module';
+// directives
+import { DirectivesModule } from './directives/directives.module';
+// layouts
 import { LayoutsModule } from './layouts/layouts.module';
+// components
 import { ComponentsModule } from './components/components.module';
 
 @NgModule({
@@ -18,6 +25,8 @@ import { ComponentsModule } from './components/components.module';
     LayoutsModule,
     ComponentsModule,
     RouterModule,
+    PipesModule,
+    DirectivesModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

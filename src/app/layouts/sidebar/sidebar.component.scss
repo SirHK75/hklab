@@ -12,7 +12,9 @@ span {
 } 
 
 /* vars */
-$navSize: 13em;
+$fullNavSize: 12em;
+$mediumNavSize: 12em;
+$navSize: 12em;
 
 /* Layout */
 .s-layout {
@@ -34,6 +36,7 @@ $navSize: 13em;
 .s-sidebar__trigger {
     z-index: 2;
     position: fixed;
+    z-index: 1000;
     top: 0;
     left: 0;
     width: 100%;
@@ -57,15 +60,18 @@ $navSize: 13em;
     font-size: 1.2em;
     font-weight: 700;
     color: rgba(255, 255, 255, .85);
+    cursor: pointer;
+    outline: none;
 }
 
 .s-sidebar__nav {
     position: fixed;
+    z-index: 999;
     top: 0;
-    left: $navSize * -1;
+    left: $fullNavSize * -1;
     overflow: hidden;
-    // transition: all .1s ease-in;
-    width: $navSize;
+    transition: all .3s ease-in-out;
+    width: $fullNavSize;
     height: 100%;
     background: #243e56;
     font-size: 1em;
@@ -85,13 +91,13 @@ $navSize: 13em;
     top: 4em;
     left: 0;
     padding: 0;
-    width: $navSize;
+    width: $fullNavSize;
 }
 
 .s-sidebar__nav div span {
     width: 100%;
     margin-top: .4em;
-    outline: none;    
+    outline: none;
 }
 
 .s-sidebar__nav-link {
@@ -131,7 +137,7 @@ $navSize: 13em;
 }
 
 .s-layout__sidebar:hover + .s-layout__content {
-    transform: translateX($navSize);
+    // transform: translateX($fullNavSize);
 }
 
 /* Mobile First */
@@ -155,15 +161,15 @@ $navSize: 13em;
     }
 
     .s-layout__sidebar:hover + .s-layout__content {
-        transform: translateX(9em);
+        // transform: translateX(9em);
     }
 
-    .s-sidebar__nav:hover,
-    .s-sidebar__nav:focus,
-    .s-sidebar__trigger:hover + .s-sidebar__nav,
-    .s-sidebar__trigger:focus + .s-sidebar__nav {
-        width: $navSize;
-    }
+    // .s-sidebar__nav:hover,
+    // .s-sidebar__nav:focus,
+    // .s-sidebar__trigger:hover + .s-sidebar__nav,
+    // .s-sidebar__trigger:focus + .s-sidebar__nav {
+    //     width: $navSize;
+    // }
 
     // .s-layout__sidebar:hover .s-sidebar__trigger,
     // .s-layout__sidebar:focus .s-sidebar__trigger {
@@ -174,7 +180,7 @@ $navSize: 13em;
 
 @media (min-width: 68em) {
     .s-layout__content {
-        margin-left: $navSize;
+        margin-left: $fullNavSize;
         padding-top: 5em;
     }
 
@@ -184,7 +190,7 @@ $navSize: 13em;
     // }
 
     .s-sidebar__nav {
-        width: $navSize;
+        width: $fullNavSize;
         top: 4em;
     }
 
@@ -194,7 +200,7 @@ $navSize: 13em;
     }
 
     .s-layout__sidebar:hover + .s-layout__content {
-        transform: translateX(0);
+        // transform: translateX(0);
     }
     
 
