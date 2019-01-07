@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import {
-  HighlightDirective,
-} from './highlight.directive';
+import { HighlightDirective } from './highlight.directive';
+import { TooltipDirective } from './tooltip.directive';
 
 @NgModule({
   declarations: [
     HighlightDirective,
+    TooltipDirective,
   ],
   imports: [
     CommonModule,
@@ -18,6 +18,7 @@ import {
   ],
   exports: [
     HighlightDirective,
+    TooltipDirective,
   ],
   entryComponents: []
 })

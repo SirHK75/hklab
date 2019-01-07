@@ -1,4 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+// RESETS CSS
+// ---------
+// @import "assets/styles/minimalReset3.scss";
+// @import "assets/styles/condensedUniversalReset.scss";
+// @import "assets/styles/poorMan.scss";
+// @import "assets/styles/siolonsGlobal.scss";
+// @import "assets/styles/shaunInman.scss";
+// @import "assets/styles/yahoo.scss";
+// @import "assets/styles/tantek.scss";
+// @import "assets/styles/tripoli.scss";
+// @import "assets/styles/ericMeyers.scss";
+// @import "assets/styles/normalize.scss";
+@import "assets/styles/bootstrap.scss";
+
+
+// UTILITIES
+// ---------
+@import "assets/styles/utilities.scss";
+
+
+// ANGULAR HK Fixes
+// ----------------
 
 body {
     font-family: 'Roboto', sans-serif;
@@ -8,6 +29,10 @@ body {
 .s-layout__content > *:not(router-outlet) {
     width: 100%;
 }
+
+
+// Commons Classes
+// ---------------
 
 .bloc-example {
     position: relative;
@@ -32,4 +57,16 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
     margin-right: .4em;
+}
+
+.tooltip {
+    background-color: rgba(255, 255, 255, .9);
+    border-radius: 5px;
+    border: 2px solid rgba(229, 229, 229, 1);
+    padding: 8px;
+    position: absolute;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    font-size: .9em;
 }

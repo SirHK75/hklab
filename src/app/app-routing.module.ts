@@ -12,6 +12,8 @@ import { TestComponent } from './components/test/test.component';
 import { BikerComponent } from './components/biker/biker.component';
 import { PipesComponent } from './components/pipes/pipes.component';
 import { DirectivesComponent } from './components/directives/directives.component';
+import { UIKitComponent } from './components/uikit/uikit.component';
+import { VariablesComponent } from './components/variables/variables.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -52,6 +54,18 @@ const routes: Routes = [
       {
         path: 'biker',
         component: BikerComponent,
+        pathMatch: 'full',
+        // canActivate: [AuthGuard],
+      },
+      {
+        path: 'uikit',
+        component: UIKitComponent,
+        pathMatch: 'full',
+        // canActivate: [AuthGuard],
+      },
+      {
+        path: 'vars',
+        component: VariablesComponent,
         pathMatch: 'full',
         // canActivate: [AuthGuard],
       },

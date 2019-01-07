@@ -1,0 +1,125 @@
+// HEADINGS
+h1 {
+    color: red;
+}
+h2 {
+    color: blue;
+}
+h3 {
+    color: green;
+}
+h4 {
+    color: yellow;
+}
+h5 {
+    color: orange;
+}
+h6 {
+    color: pink;
+}
+
+// HR Separator
+hr {
+  height: 1px;
+  width:100%;
+  display:block; /* for use on default inline elements like span */
+  margin: 2em 0;
+  overflow: hidden;
+  background-color: #e5e5e5;
+}
+
+// TEXTS
+.smallText {
+    font-size: 80%;
+}
+.bigText {
+    font-size: 150%;
+}
+.strikethrough {
+    text-decoration: line-through;
+}
+.underlined {
+    text-decoration: underline;
+}
+.bold {
+    font-weight: 700;
+}
+.italic {
+    font-style: italic;
+}
+.highlight {
+    background-color: yellow;
+    padding: .2em;
+}
+
+// DISPLAY
+.d-none {
+    display: none !important;
+}
+.d-inline {
+    display: inline !important;
+}
+.d-inline-block {
+    display: inline-block !important;
+}
+
+// COLORS
+
+
+// FORMS
+@for $i from 0 through 30 { // 0 to 150 (step 5)
+    .square#{5*$i} {
+        display: block;
+        width: 5px*$i;
+        height: 5px*$i;
+    }
+    .circle#{5*$i} {
+        display: block;
+        width: 5px*$i;
+        height: 5px*$i;
+        border-radius: 50%;
+    }
+}
+
+// .floatLeft {
+//     float: left;
+// }
+
+// .floatRight {
+//     float: right;
+// }
+
+// @for $i from 0 through 30 {
+//     .padding-top-#{5*$i} {
+//         padding-top: 5px*$i !important;
+//     }
+//     .padding-right-#{5*$i} {
+//         padding-right: 5px*$i !important;
+//     }
+//     .padding-bottom-#{5*$i} {
+//         padding-bottom: 5px*$i !important;
+//     }
+//     .padding-left-#{5*$i} {
+//         padding-left: 5px*$i !important;
+//     }
+//     .padding-#{5*$i} {
+//         padding: 5px*$i !important;
+//     }
+
+//     .margin-top-#{5*$i} {
+//         margin-top: 5px*$i !important;
+//     }
+//     .margin-right-#{5*$i} {
+//         margin-right: 5px*$i !important;
+//     }
+//     .margin-bottom-#{5*$i} {
+//         margin-bottom: 5px*$i !important;
+//     }
+//     .margin-left-#{5*$i} {
+//         margin-left: 5px*$i !important;
+//     }
+
+//     .margin-#{5*$i} {
+//         margin: 5px*$i !important;
+//     }
+// }

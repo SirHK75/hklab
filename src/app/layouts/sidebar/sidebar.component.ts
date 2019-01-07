@@ -43,6 +43,16 @@ export class SideBarLayoutComponent {
       icon: 'fas fa-question',
       route: '/test'
     },
+    {
+      name: 'UI Kits',
+      icon: 'fab fa-uikit',
+      route: '/uikit'
+    },
+    {
+      name: 'Classes/Vars',
+      icon: 'fas fa-code',
+      route: '/vars'
+    },
   ];
 
 }

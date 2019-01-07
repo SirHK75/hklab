@@ -15,6 +15,8 @@ import { TestComponent } from './test/test.component';
 import { BikerComponent } from './biker/biker.component';
 import { PipesComponent } from './pipes/pipes.component';
 import { DirectivesComponent } from './directives/directives.component';
+import { UIKitComponent } from './uikit/uikit.component';
+import { VariablesComponent } from './variables/variables.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { DirectivesComponent } from './directives/directives.component';
     BikerComponent,
     PipesComponent,
     DirectivesComponent,
+    UIKitComponent,
+    VariablesComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,6 +42,8 @@ import { DirectivesComponent } from './directives/directives.component';
     BikerComponent,
     PipesComponent,
     DirectivesComponent,
+    UIKitComponent,
+    VariablesComponent,
   ],
   providers: [],
   bootstrap: []
