@@ -53,6 +53,11 @@ export class SideBarLayoutComponent {
       icon: 'fas fa-code',
       route: '/vars'
     },
+    {
+      name: 'Sliders',
+      icon: 'far fa-images',
+      route: '/sliders'
+    },
   ];
 
 }

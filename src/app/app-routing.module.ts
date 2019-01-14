@@ -14,6 +14,7 @@ import { PipesComponent } from './components/pipes/pipes.component';
 import { DirectivesComponent } from './components/directives/directives.component';
 import { UIKitComponent } from './components/uikit/uikit.component';
 import { VariablesComponent } from './components/variables/variables.component';
+import { SlidersComponent } from './components/sliders/sliders.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -66,6 +67,18 @@ const routes: Routes = [
       {
         path: 'vars',
         component: VariablesComponent,
+        pathMatch: 'full',
+        // canActivate: [AuthGuard],
+      },
+    ]
+  },
+  {
+    path: '',
+    component: SimpleLayoutComponent,
+    children: [
+      {
+        path: 'sliders',
+        component: SlidersComponent,
         pathMatch: 'full',
         // canActivate: [AuthGuard],
       },

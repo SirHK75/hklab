@@ -17,6 +17,7 @@ import { PipesComponent } from './pipes/pipes.component';
 import { DirectivesComponent } from './directives/directives.component';
 import { UIKitComponent } from './uikit/uikit.component';
 import { VariablesComponent } from './variables/variables.component';
+import { SlidersComponent } from './sliders/sliders.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { VariablesComponent } from './variables/variables.component';
     DirectivesComponent,
     UIKitComponent,
     VariablesComponent,
+    SlidersComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,6 +46,7 @@ import { VariablesComponent } from './variables/variables.component';
     DirectivesComponent,
     UIKitComponent,
     VariablesComponent,
+    SlidersComponent,
   ],
   providers: [],
   bootstrap: []

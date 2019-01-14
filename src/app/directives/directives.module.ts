@@ -5,11 +5,13 @@ import { RouterModule } from '@angular/router';
 
 import { HighlightDirective } from './highlight.directive';
 import { TooltipDirective } from './tooltip.directive';
+import { SliderDirective } from './slider.directive';
 
 @NgModule({
   declarations: [
     HighlightDirective,
     TooltipDirective,
+    SliderDirective,
   ],
   imports: [
     CommonModule,
@@ -19,6 +21,7 @@ import { TooltipDirective } from './tooltip.directive';
   exports: [
     HighlightDirective,
     TooltipDirective,
+    SliderDirective,
   ],
   entryComponents: []
 })
