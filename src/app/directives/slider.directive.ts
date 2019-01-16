@@ -452,7 +452,7 @@ export class SliderDirective implements OnInit, AfterViewInit {
   // MOUSE EVENTS
   @HostListener('mouseover') onMouseOver() {
     this.focusSlider = true;
-    if (this.isArrows) {
+    if (this.isArrows && typeof this.btLeft !== 'undefined' && typeof this.btRight !== 'undefined') {
       this.renderer.setStyle(
         this.btLeft,
         'opacity',
