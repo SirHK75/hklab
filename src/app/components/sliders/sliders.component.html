@@ -1,30 +1,112 @@
-<h1 class="margin-20">Slider Directive</h1>
+<div class="margin-20">
+    <h1 class="margin-bottom-20">Slider Directive</h1>
 
-<div [appSlider]="{isBullets: true}">
-    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
-    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
-    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
-    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
-    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
-</div>
-
-<hr>
-
-<div [appSlider]="{isBullets: true, autoSlide: true}">
-    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
-    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
-    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
-    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
-    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
-</div>
-
-<hr>
-
-<div appSlider>
-    <div class="padding-left-20 padding-right-20">
-        <h3>Hello world</h3>
-        <p style="text-align: justify">Lorem ipsum dolor sit amet, consectetur highlight elit. Pellentesque sollicitudin barré mi, eget dignissim sem souligné nec. Nam a ligula rutrum, bold lectus in, condimentum erat. Fusce italic odio vitae laoreet. Souligné barré gras italic. Aenean mauris arcu, small text congue vitae, interdum dictum leo. Big text mauris, interdum aliquam leo euismod at.</p>
+    <h4>Slider sans params</h4>
+    <div appSlider>
+        <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+        <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+        <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+        <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+        <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
     </div>
-    <img src="https://via.placeholder.com/640x250" alt="Image">
-    <div class="card"><marquee>Hello World</marquee></div>
+    
+    <hr>
+
+    <h4>Slider avec arrows, bullets, autoslide et timer custom</h4>
+    <div [appSlider]="{isArrows: true, isBullets: true, autoSlide: true, timer: 2}">
+        <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+        <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+        <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+        <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+        <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+    </div>
+
+    <hr>
+
+    <h4>Slider dans des containers (arrows/bullets responsive)</h4>
+    <div class="margin-top-20">
+        <div class="row">
+            <div class="col-6">
+                <div [appSlider]="{isBullets: true}">
+                    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+                    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+                    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+                    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+                    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+                    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+                    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+                    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+                    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+                    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+                    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+                    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+                    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+                    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+                    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+                    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+                    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+                    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+                    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+                    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+                    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+                    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+                    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+                    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+                    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+                    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+                    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+                    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+                    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+                    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+                </div>
+            </div>
+            <div class="col-6">
+                <div [appSlider]="{isArrows: true, autoSlide: true, timer: 1}">
+                    <img src="https://media.playstation.com/is/image/SCEA/just-cause-4-normal-hero-background-01-ps4-us-06jun18" alt="Image">
+                    <img src="https://tendomag.com/wp-content/uploads/2018/10/windows_games_v04_1920_halowars2_img-6.jpg" alt="Image">
+                    <img src="http://nerdbacon.com/wp-content/uploads/2017/08/Horizon-Zero-Dawn-Banner.jpg" alt="Image">
+                    <img src="http://4.bp.blogspot.com/-VLIZA4VQj5Q/UZSwpfCe4jI/AAAAAAAADCc/SLrv63AJF8c/s1600/DeadNinjas.jpg" alt="Image">
+                    <img src="https://compass-ssl.xbox.com/assets/05/9e/059eb294-8f72-4dfb-98fa-d479d7669805.jpg" alt="Image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4>Slider type barre scrollable HORIZONTAL</h4>    
+    <div [appSlider]="{inline: true, isArrows: true}" class="margin-top-20">
+        <div *ngFor="let item of items" class="menuItemContainerH">
+            <div class="menuItem">
+                <a href="http://www.google.com" target="_blank">
+                    {{item}}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4>Slider type barre scrollable VERTICAL</h4>    
+    <div [appSlider]="{inline: true, isArrows: true, isVertical: true, verticalLimit: 425}" class="margin-top-20">
+        <div *ngFor="let item of items" class="menuItemContainerV">
+            <div class="menuItem">
+                <a href="http://www.google.com" target="_blank">
+                    {{item}}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4>Slider HTML composé de DIV, IMG, etc.</h4>
+    <div [appSlider]="{isBullets: true}">
+        <div class="padding-left-20 padding-right-20">
+            <h4>Hello world</h4>
+            <p style="text-align: justify">Lorem ipsum dolor sit amet, consectetur highlight elit. Pellentesque sollicitudin barré mi, eget dignissim sem souligné nec. Nam a ligula rutrum, bold lectus in, condimentum erat. Fusce italic odio vitae laoreet. Souligné barré gras italic. Aenean mauris arcu, small text congue vitae, interdum dictum leo. Big text mauris, interdum aliquam leo euismod at.</p>
+        </div>
+        <img src="https://via.placeholder.com/640x250" alt="Image">
+        <div class="card"><marquee>Hello World</marquee></div>
+    </div>
 </div>

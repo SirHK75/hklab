@@ -1,11 +1,11 @@
 /* tslint:disable:member-ordering */
-import { OnInit } from '@angular/core';
+import { OnInit, AfterViewInit } from '@angular/core';
 import { Directive, ElementRef, HostListener, Renderer2, Input } from '@angular/core';
 
 @Directive({
   selector: '[appSlider]'
 })
-export class SliderDirective implements OnInit {
+export class SliderDirective implements OnInit, AfterViewInit {
 
   @Input('appSlider') sliderConfig: any;
 
@@ -13,11 +13,26 @@ export class SliderDirective implements OnInit {
   divSlides: any;
   divBullets: any;
   originalContent = [];
+  isAnimated = false;
+  focusSlider = false;
+  innerWidth = window.innerWidth;
+
+  // CONFIG
+  isBullets = false;
+  isArrows = false;
+  isInline = false;
+  isVertical = false;
+  verticalLimit = 0;
+  isClickBullet = false;
+  autoSlide = false;
+  autoSliderTimer = 0;
 
   // SLIDER PARAMS
   nbSlides = 0;
   currentSlide = 0;
   containerWidth: any = 0;
+  inlineWidthItem = 0;
+  inlineHeightItem = 0;
 
   // IMG
   imgToload = [];
@@ -32,70 +47,146 @@ export class SliderDirective implements OnInit {
   posX = 0;
   posY = 0;
   isDrag = false;
-
-  // config
-  isBullets = false;
-  isClickBullet = false;
-  autoSlide = false;
+  hasMoved = false;
 
   // autoslide
-  timer = 2000; // millisec
+  timer = 5000; // millisec
   userStopAutoSlider = false;
   timeOut = null;
+
+  // arrows
+  btControls: any;
+  btLeft: any;
+  btRight: any;
+  isClickArrow = false;
 
   constructor(
     private renderer: Renderer2,
     private el: ElementRef,
   ) {
     this.parent = this.el.nativeElement;
+    this.renderer.setStyle(
+      this.parent,
+      'opacity',
+      '0'
+    );
   }
 
   ngOnInit() {
     this.getSliderConfig();
-
-    this.containerWidth = this.parent.offsetWidth;
-
     // get original contents
     const children = this.parent.childNodes;
-    this.nbTotalImg = 0;
-    for (const child of children) {
-      this.originalContent.push(child);
-      if (child.nodeName.toLowerCase() === 'img') {
-        this.originalContent[this.originalContent.length - 1].draggable = false;
-        this.nbTotalImg++;
+    this.getAllContents(children);
+    if (this.nbSlides > 0) {
+      this.setSlider();
+    }
+  }
+
+  ngAfterViewInit() {
+    // get view generated original contents
+    if (this.nbSlides <= 0) {
+      const children = this.parent.childNodes;
+      this.getAllContents(children);
+      if (this.nbSlides > 0) {
+        this.setSlider();
+      }
+    }
+  }
+
+  getAllContents(contents) {
+    this.nbSlides = 0;
+    for (const child of contents) {
+      // check si on gère bien tous les types de commentaires et autres trucs qu'on ne voudrait pas
+      if (child.nodeName !== '#comment') {
+        this.originalContent.push(child);
+        this.inlineWidthItem = (child.offsetWidth > this.inlineWidthItem) ? child.offsetWidth : this.inlineWidthItem;
+        this.inlineHeightItem = (child.offsetHeight > this.inlineHeightItem) ? child.offsetHeight : this.inlineHeightItem;
+        if (child.nodeName.toLowerCase() === 'img') {
+          this.originalContent[this.originalContent.length - 1].draggable = false;
+          this.nbTotalImg++;
+        }
       }
     }
     this.nbSlides = this.originalContent.length - 1;
-    // clean parent
-    this.parent.innerHTML = '';
-    // get parent width
-    this.containerWidth = this.parent.getBoundingClientRect();
+  }
+
+  setSlider() {
     // Assign parent size
     this.renderer.setStyle(
       this.parent,
-      'width',
-      '100%'
+      'transition',
+      'opacity .6s ease-out'
     );
+    const widthParent = (!this.isVertical) ? '100%' : this.inlineWidthItem + 'px';
+    this.renderer.setStyle(
+      this.parent,
+      'width',
+      widthParent
+    );
+    if (this.isVertical) {
+      const slidesHeight = (this.verticalLimit === 0) ? this.inlineHeightItem * (this.nbSlides + 1) : this.verticalLimit;
+      this.renderer.setStyle(
+        this.parent,
+        'height',
+        slidesHeight + 'px'
+      );
+    }
     this.renderer.setStyle(
       this.parent,
       'overflow',
       'hidden'
     );
+    if (!this.isInline) {
+      this.renderer.setStyle(
+        this.parent,
+        'text-align',
+        'center'
+      );
+    }
     this.renderer.setStyle(
       this.parent,
-      'text-align',
-      'center'
+      'position',
+      'relative'
     );
 
-    this.loadImgs();
+    // clean parent
+    this.parent.innerHTML = '';
+
+    setTimeout(() => {
+      this.containerWidth = this.parent.getBoundingClientRect();
+      // remove arrows if container < 250px
+      this.isArrows = (this.containerWidth.width <= 250 && !this.isVertical)
+      ? false
+      : (typeof this.sliderConfig.isArrows !== 'undefined')
+      ? this.sliderConfig.isArrows
+      : false;
+
+      if (this.nbTotalImg > 0) {
+        this.loadImgs();
+      } else {
+        this.putContent();
+      }
+    }, 0);
   }
 
   getSliderConfig() {
-    this.isBullets = (typeof this.sliderConfig.isBullets !== 'undefined') ? this.sliderConfig.isBullets : false;
-    this.autoSlide = (typeof this.sliderConfig.autoSlide !== 'undefined') ? this.sliderConfig.autoSlide : false;
+    this.isBullets = (typeof this.sliderConfig.isBullets !== 'undefined') ? this.sliderConfig.isBullets : this.isBullets;
+    this.isArrows = (typeof this.sliderConfig.isArrows !== 'undefined') ? this.sliderConfig.isArrows : this.isArrows;
+    this.autoSlide = (typeof this.sliderConfig.autoSlide !== 'undefined') ? this.sliderConfig.autoSlide : this.autoSlide;
+    this.autoSliderTimer = (typeof this.sliderConfig.timer !== 'undefined') ? this.sliderConfig.timer * 1000 : this.timer;
+    this.timer = this.autoSliderTimer; // assign
+
+    this.isVertical = (typeof this.sliderConfig.isVertical !== 'undefined') ? this.sliderConfig.isVertical : this.isVertical;
+    this.verticalLimit = (typeof this.sliderConfig.verticalLimit !== 'undefined') ? this.sliderConfig.verticalLimit : this.verticalLimit;
+
+    this.isInline = (typeof this.sliderConfig.inline !== 'undefined') ? this.sliderConfig.inline : this.isInline;
+    // slider inline = no bullets + no autoslide
+    this.isBullets = (this.isInline) ? false : this.isBullets;
+    this.autoSlide = (this.isInline) ? false : this.autoSlide;
   }
 
   loadImgs() {
+    this.imgLoaded = 0;
     for (const content of this.originalContent) {
       // Images
       if (content.nodeName.toLowerCase() === 'img') {
@@ -113,14 +204,16 @@ export class SliderDirective implements OnInit {
   }
 
   putContent() {
+    // remove if exist
     if (typeof this.divSlides !== 'undefined') {
-      // remove if exist
       this.parent.removeChild(this.divSlides);
     }
-    if (typeof this.divBullets !== 'undefined') {
+    if (typeof this.divBullets !== 'undefined' && this.isBullets) {
       this.parent.removeChild(this.divBullets);
     }
-    // create divSlide if not exists
+    // get containerWidth
+    this.containerWidth = this.parent.getBoundingClientRect();
+    // create divSlides if not exists
     this.divSlides = document.createElement('div');
     this.divSlides.className = 'dirslider_divSlides';
     // push divSlide into parent
@@ -128,28 +221,44 @@ export class SliderDirective implements OnInit {
 
     // assign divSlides width from new containerWidth
     const nbSlides = (this.currentSlide === 0 || this.currentSlide === this.nbSlides) ? this.nbSlides + 2 : this.nbSlides + 1;
+    let slidesWidth: any;
+    if (!this.isInline) {
+      slidesWidth = this.containerWidth.width * nbSlides;
+    } else {
+      if (!this.isVertical) {
+        slidesWidth = this.inlineWidthItem * (this.nbSlides + 1);
+      } else {
+        slidesWidth = this.inlineWidthItem;
+        this.renderer.setStyle(
+          this.divSlides,
+          'height',
+          (this.inlineHeightItem * (this.nbSlides + 1)) + 'px'
+        );
+      }
+    }
     this.renderer.setStyle(
       this.divSlides,
       'width',
-      (this.containerWidth.width * nbSlides) + 'px'
+      slidesWidth + 'px'
     );
     // real marginLeft
     const nbDecalScreen = (this.currentSlide === 0) ? this.currentSlide + 1 : this.currentSlide;
-    this.marginLeft = (this.containerWidth.width * (nbDecalScreen)) * - 1;
+    this.marginLeft = (!this.isInline) ? (this.containerWidth.width * (nbDecalScreen)) * - 1 : this.marginLeftDrag;
     // make diff between real MarginLeft and dragged marginLeft - to go back to real if mouseup too soon
     this.marginLeftDrag = this.marginLeft;
+    const marginType = (!this.isVertical) ? 'margin-left' : 'margin-top';
     this.renderer.setStyle(
       this.divSlides,
-      'margin-left',
+      marginType,
       this.marginLeft + 'px'
     );
     // add contents
     let slide: any;
 
     // add previous slide
-    if (this.currentSlide === 0) {
+    if (this.currentSlide === 0 && !this.isInline) {
       slide = document.createElement('div');
-      slide.className = 'dirslider_slide' + '_previous';
+      slide.className = 'dirslider_slide';
       slide.style.width = (this.containerWidth.width) + 'px';
       // append content into div
       const clonedContent = this.originalContent[this.originalContent.length - 1].cloneNode(true);
@@ -161,8 +270,9 @@ export class SliderDirective implements OnInit {
     // loop all accessible slides
     for (let i = 0; i < this.originalContent.length; i++) {
       slide = document.createElement('div');
-      slide.className = 'dirslider_slide' + i;
-      slide.style.width = (this.containerWidth.width) + 'px';
+      slide.className = 'dirslider_slide';
+      const itemWidth = (!this.isInline) ? this.containerWidth.width : this.inlineWidthItem;
+      slide.style.width = itemWidth + 'px';
       // append content into div
       slide.appendChild(this.originalContent[i]);
       // push div into divSlide
@@ -170,15 +280,25 @@ export class SliderDirective implements OnInit {
     }
 
     // add next slide -> index 0
-    if (this.currentSlide === this.nbSlides) {
+    if (this.currentSlide === this.nbSlides && !this.isInline) {
       slide = document.createElement('div');
-      slide.className = 'dirslider_slide' + '_next';
+      slide.className = 'dirslider_slide';
       slide.style.width = (this.containerWidth.width) + 'px';
       // append content into div
       const clonedContent = this.originalContent[0].cloneNode(true);
       slide.appendChild(clonedContent);
       // push div into divSlide
       this.divSlides.appendChild(slide);
+    }
+
+    if (!this.isInline) {
+      // >768 = 12 + 6 // <=768 = 16 + 6
+      const bulletSize = (innerWidth > 768) ? ((this.nbSlides + 1) * 18 - 6) : ((this.nbSlides + 1) * 22 - 6);
+      this.isBullets = (bulletSize > this.containerWidth.width)
+      ? false
+      : (typeof this.sliderConfig.isBullets !== 'undefined')
+      ? this.sliderConfig.isBullets
+      : false;
     }
 
     // add bullets
@@ -198,57 +318,258 @@ export class SliderDirective implements OnInit {
       // push divSlide into parent
       this.parent.appendChild(this.divBullets);
     }
+    // autoslide
     if (this.autoSlide && !this.userStopAutoSlider) {
       clearTimeout(this.timeOut);
       this.timeOut = setTimeout(() => {
         this.processAutoSlide();
       }, this.timer);
     }
+
+    // add arrows
+    if (this.isArrows) {
+      if (typeof this.btLeft === 'undefined') {
+        this.btLeft = document.createElement('div');
+        this.btLeft.className = 'dirslider_btLeft';
+        this.btLeft.innerHTML = '<i class="fas fa-angle-left"></i>';
+        // push div into divSlide
+        this.parent.appendChild(this.btLeft);
+        const tmpTop = (!this.isVertical)
+          ? ((this.divSlides.offsetHeight / 2) - (this.btLeft.offsetHeight / 2) + 2)
+          : ((this.containerWidth.height / 2) - (this.btLeft.offsetHeight / 2) + 2);
+        this.renderer.setStyle(
+          this.btLeft,
+          'top',
+          tmpTop + 'px'
+        );
+      }
+      if (typeof this.btRight === 'undefined') {
+        this.btRight = document.createElement('div');
+        this.btRight.className = 'dirslider_btRight';
+        this.btRight.innerHTML = '<i class="fas fa-angle-right"></i>';
+        // push div into divSlide
+        this.parent.appendChild(this.btRight);
+        const tmpTop = (!this.isVertical)
+          ? ((this.divSlides.offsetHeight / 2) - (this.btRight.offsetHeight / 2) + 2)
+          : ((this.parent.offsetHeight / 2) - (this.btRight.offsetHeight / 2) + 2);
+        this.renderer.setStyle(
+          this.btRight,
+          'top',
+          tmpTop + 'px'
+        );
+      }
+
+      const opacity = (this.focusSlider) ? 1 : 0;
+      this.renderer.setStyle(
+        this.btLeft,
+        'opacity',
+        opacity
+      );
+      this.renderer.setStyle(
+        this.btRight,
+        'opacity',
+        opacity
+      );
+    } else {
+      if (typeof this.btLeft !== 'undefined') {
+        this.parent.removeChild(this.btLeft);
+        this.btLeft = undefined;
+      }
+      if (typeof this.btRight !== 'undefined') {
+        this.parent.removeChild(this.btRight);
+        this.btRight = undefined;
+      }
+    }
+
+    if (this.isInline) {
+      // particular case: when margin on mobile bigger than desktop
+      this.marginLeftDrag = ((this.divSlides.offsetWidth - this.containerWidth.width + this.marginLeftDrag) < 0)
+          ? this.containerWidth.width - this.divSlides.offsetWidth
+          : this.marginLeftDrag;
+    }
+
+    this.renderer.removeStyle(
+      this.parent,
+      'opacity',
+    );
   }
 
-  // RESIZE
+  // RESIZE EVENT
   @HostListener('window:resize', ['$event']) onResize(event) {
     clearTimeout(this.timeOut);
     this.containerWidth = this.parent.getBoundingClientRect();
+    this.innerWidth = window.innerWidth;
+
+    if (this.isInline) {
+      // particular case: when margin on mobile bigger than desktop
+      this.marginLeftDrag = ((this.divSlides.offsetWidth - this.containerWidth.width + this.marginLeftDrag) < 0)
+          ? this.containerWidth.width - this.divSlides.offsetWidth
+          : this.marginLeftDrag;
+    }
+    // remove arrows if container < 250px
+    this.isArrows = (this.containerWidth.width <= 250 && !this.isVertical)
+    ? false
+    : (typeof this.sliderConfig.isArrows !== 'undefined')
+    ? this.sliderConfig.isArrows
+    : false;
+
     this.putContent();
+
+    // re-position arrows
+    let tmpTop: any;
+    if (typeof this.btLeft !== 'undefined') {
+      tmpTop = (!this.isVertical)
+        ? ((this.divSlides.offsetHeight / 2) - (this.btLeft.offsetHeight / 2) + 2)
+        : ((this.containerWidth.height / 2) - (this.btLeft.offsetHeight / 2) + 2);
+      this.renderer.setStyle(
+        this.btLeft,
+        'top',
+        tmpTop + 'px'
+      );
+    }
+    if (typeof this.btRight !== 'undefined') {
+      tmpTop = (!this.isVertical)
+        ? ((this.divSlides.offsetHeight / 2) - (this.btRight.offsetHeight / 2) + 2)
+        : ((this.parent.offsetHeight / 2) - (this.btRight.offsetHeight / 2) + 2);
+      this.renderer.setStyle(
+        this.btRight,
+        'top',
+        tmpTop + 'px'
+      );
+    }
   }
 
-  // DESKTOP
+  // KEYBOARD EVENT
+  @HostListener('document:keydown', ['$event']) handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'ArrowLeft' && this.focusSlider && !this.isAnimated) {
+      this.processClickArrow(1);
+    }
+    if (event.key === 'ArrowRight' && this.focusSlider && !this.isAnimated) {
+      this.processClickArrow(-1);
+    }
+  }
+
+  // MOUSE EVENTS
+  @HostListener('mouseover') onMouseOver() {
+    this.focusSlider = true;
+    if (this.isArrows) {
+      this.renderer.setStyle(
+        this.btLeft,
+        'opacity',
+        '1'
+      );
+      this.renderer.setStyle(
+        this.btRight,
+        'opacity',
+        '1'
+      );
+    }
+  }
+  @HostListener('mouseout') onMouseOut() {
+    this.focusSlider = false;
+    if (this.isArrows) {
+      this.renderer.setStyle(
+        this.btLeft,
+        'opacity',
+        '0'
+      );
+      this.renderer.setStyle(
+        this.btRight,
+        'opacity',
+        '0'
+      );
+    }
+  }
   @HostListener('mousedown', ['$event']) onMouseDown(event: MouseEvent) {
     const target: any = event.target;
-    if (target.className !== 'dirslider_bullet') {
-      this.processMouseDown(event);
-    } else {
+    if ((target.className === 'dirslider_bullet' || target.className === 'dirslider_bullet dirslider_activeBullet') && !this.isAnimated) {
       this.isClickBullet = true;
+    } else if ((target.className === 'dirslider_btLeft' || target.className === 'fas fa-angle-left') && !this.isAnimated) {
+      this.isClickArrow = true;
+    } else if ((target.className === 'dirslider_btRight' || target.className === 'fas fa-angle-right') && !this.isAnimated) {
+      this.isClickArrow = true;
+    } else {
+      if (!this.isAnimated) {
+        this.processMouseDown(event);
+      }
     }
   }
 
   @HostListener('mousemove', ['$event']) onMouseMove(event: MouseEvent) {
-    this.processMouseMove(event);
+    if (!this.isAnimated) {
+      this.processMouseMove(event);
+    }
   }
 
   @HostListener('mouseup', ['$event']) onMouseUp(event: MouseEvent) {
     const target: any = event.target;
-    if (target.className === 'dirslider_bullet' && this.isClickBullet) {
+    if (
+      (target.className === 'dirslider_bullet' || target.className === 'dirslider_bullet dirslider_activeBullet')
+      && this.isClickBullet && !this.isAnimated
+    ) {
       this.processClickBullet(target.id);
+    } else if (
+      (target.className === 'dirslider_btLeft' || target.className === 'fas fa-angle-left')
+      && this.isClickArrow && !this.isAnimated
+    ) {
+      this.processClickArrow(1);
+    } else if (
+      (target.className === 'dirslider_btRight' || target.className === 'fas fa-angle-right')
+      && this.isClickArrow && !this.isAnimated
+    ) {
+      this.processClickArrow(-1);
     } else {
       this.processMouseUp(event);
     }
     this.isClickBullet = false;
+    this.isClickArrow = false;
   }
   @HostListener('mouseleave', ['$event']) onMouseLeave(event: MouseEvent) {
     this.processMouseUp(event);
   }
 
-  // MOBILE
+  // TOUCH EVENTS
   @HostListener('touchstart', ['$event']) onTouchStart(event: TouchEvent) {
-    this.processMouseDown(event);
+    const target: any = event.target;
+    if ((target.className === 'dirslider_bullet' || target.className === 'dirslider_bullet dirslider_activeBullet') && !this.isAnimated) {
+      this.isClickBullet = true;
+    } else if ((target.className === 'dirslider_btLeft' || target.className === 'fas fa-angle-left') && !this.isAnimated) {
+      this.isClickArrow = true;
+    } else if ((target.className === 'dirslider_btRight' || target.className === 'fas fa-angle-right') && !this.isAnimated) {
+      this.isClickArrow = true;
+    } else {
+      if (!this.isAnimated) {
+        this.processMouseDown(event);
+      }
+    }
   }
   @HostListener('touchmove', ['$event']) onTouchMove(event: TouchEvent) {
-    this.processMouseMove(event);
+    if (!this.isAnimated) {
+      this.processMouseMove(event);
+    }
   }
   @HostListener('touchend', ['$event']) onTouchEnd(event: TouchEvent) {
-    this.processMouseUp(event);
+    const target: any = event.target;
+    if (
+      (target.className === 'dirslider_bullet' || target.className === 'dirslider_bullet dirslider_activeBullet')
+      && this.isClickBullet && !this.isAnimated
+    ) {
+      this.processClickBullet(target.id);
+    } else if (
+      (target.className === 'dirslider_btLeft' || target.className === 'fas fa-angle-left')
+      && this.isClickArrow && !this.isAnimated
+    ) {
+      this.processClickArrow(1);
+    } else if (
+      (target.className === 'dirslider_btRight' || target.className === 'fas fa-angle-right')
+      && this.isClickArrow && !this.isAnimated
+    ) {
+      this.processClickArrow(-1);
+    } else {
+      this.processMouseUp(event);
+    }
+    this.isClickBullet = false;
+    this.isClickArrow = false;
   }
 
   unify(e) {
@@ -261,10 +582,12 @@ export class SliderDirective implements OnInit {
     this.posX = this.unify(event).clientX - this.parent.offsetLeft;
     this.posY = this.unify(event).clientY;
     this.isDrag = true;
+    this.hasMoved = false;
   }
 
   processMouseMove(event) {
-    if (!!this.isDrag) {
+    if (this.isDrag) {
+      this.hasMoved = true;
       const diffX = (this.unify(event).clientX - this.parent.offsetLeft) - this.posX;
       const diffY = (this.unify(event).clientY) - this.posY;
       const tmpDiffX = (diffX < 0) ? (diffX * -1) : diffX;
@@ -272,15 +595,26 @@ export class SliderDirective implements OnInit {
       // check if scroll or swipe
       if (tmpDiffX > tmpDiffY) {
         this.marginLeftDrag = this.marginLeft + diffX;
-        if (this.marginLeftDrag < this.marginLeft) {
-          if (((this.marginLeftDrag + (this.marginLeft * -1)) * -1) > (this.containerWidth.width)) {
-            this.marginLeftDrag = this.marginLeft - (this.containerWidth.width);
-          }
-        } else {
-          if (((this.marginLeft + (this.marginLeftDrag * -1)) * -1) > (this.containerWidth.width)) {
-            this.marginLeftDrag = this.marginLeft + (this.containerWidth.width);
+        if (this.isInline) {
+          // can't swipe out of bounds
+          this.marginLeftDrag = (this.marginLeftDrag > 0) ? 0 : this.marginLeftDrag;
+          this.marginLeftDrag = ((this.divSlides.offsetWidth - this.containerWidth.width + this.marginLeftDrag) < 0)
+          ? this.containerWidth.width - this.divSlides.offsetWidth
+          : this.marginLeftDrag;
+        }
+        // can't swipe more than 1 screen
+        if (!this.isInline) {
+          if (this.marginLeftDrag < this.marginLeft) {
+            if (((this.marginLeftDrag + (this.marginLeft * -1)) * -1) > (this.containerWidth.width)) {
+              this.marginLeftDrag = this.marginLeft - (this.containerWidth.width);
+            }
+          } else {
+            if (((this.marginLeft + (this.marginLeftDrag * -1)) * -1) > (this.containerWidth.width)) {
+              this.marginLeftDrag = this.marginLeft + (this.containerWidth.width);
+            }
           }
         }
+        // move only if necessary
         if (this.marginLeftDrag !== this.marginLeft) {
           this.renderer.setStyle(
             this.divSlides,
@@ -288,50 +622,79 @@ export class SliderDirective implements OnInit {
             this.marginLeftDrag + 'px'
           );
         }
+      } else {
+        if (this.isInline && this.isVertical) {
+          this.marginLeftDrag = this.marginLeft + diffY;
+          // can't swipe out of bounds
+          this.marginLeftDrag = (this.marginLeftDrag > 0) ? 0 : this.marginLeftDrag;
+          this.marginLeftDrag = ((this.divSlides.offsetHeight - this.containerWidth.height + this.marginLeftDrag) < 0)
+          ? this.containerWidth.height - this.divSlides.offsetHeight
+          : this.marginLeftDrag;
+          // move only if necessary
+          if (this.marginLeftDrag !== this.marginLeft) {
+            this.renderer.setStyle(
+              this.divSlides,
+              'margin-top',
+              this.marginLeftDrag + 'px'
+            );
+          }
+        }
       }
     }
   }
 
   processMouseUp(event) {
-    if (!!this.isDrag) {
+    if (this.isDrag) {
       // add transition when drag finished
       this.divSlides.classList.remove('dirslider_noTransition');
-      const diff = (this.unify(event).clientX - this.parent.offsetLeft) - this.posX;
-      const tmpDiff = (diff < 0) ? (diff * -1) : diff;
-      if (tmpDiff <= ((this.containerWidth.width) / 3)) {
-        // go back if drag not enough
-        this.renderer.setStyle(
-          this.divSlides,
-          'margin-left',
-          this.marginLeft + 'px'
-        );
+      if (!this.isInline) {
+        const diff = (this.unify(event).clientX - this.parent.offsetLeft) - this.posX;
+        const tmpDiff = (diff < 0) ? (diff * -1) : diff;
+        if (tmpDiff <= ((this.containerWidth.width) / 3) && !this.isInline) {
+          this.isAnimated = true;
+          // go back if drag not enough
+          this.renderer.setStyle(
+            this.divSlides,
+            'margin-left',
+            this.marginLeft + 'px'
+          );
+        } else {
+          // user move = stop autoSlide
+          clearTimeout(this.timeOut);
+          this.userStopAutoSlider = true;
+          // move prev/next
+          if (diff < 0) {
+            this.marginLeft = this.marginLeft - (this.containerWidth.width);
+          } else {
+            this.marginLeft = this.marginLeft + (this.containerWidth.width);
+          }
+          if (diff < 0) {
+            this.currentSlide = ((this.currentSlide + 1) > this.nbSlides) ? 0 : this.currentSlide + 1;
+          } else {
+            this.currentSlide = ((this.currentSlide - 1) < 0) ? this.nbSlides : this.currentSlide - 1;
+          }
+          this.renderer.setStyle(
+            this.divSlides,
+            'margin-left',
+            this.marginLeft + 'px'
+          );
+        }
+      }
+      if (this.isInline && this.hasMoved === true) {
+        this.marginLeft = this.marginLeftDrag;
+        this.hasMoved = false;
       } else {
-        // user move = stop autoSlide
-        clearTimeout(this.timeOut);
-        this.userStopAutoSlider = true;
-        // move prev/next
-        if (diff < 0) {
-          this.marginLeft = this.marginLeft - (this.containerWidth.width);
-        } else {
-          this.marginLeft = this.marginLeft + (this.containerWidth.width);
-        }
-        if (diff < 0) {
-          this.currentSlide = ((this.currentSlide + 1) > this.nbSlides) ? 0 : this.currentSlide + 1;
-        } else {
-          this.currentSlide = ((this.currentSlide - 1) < 0) ? this.nbSlides : this.currentSlide - 1;
-        }
-        this.renderer.setStyle(
-          this.divSlides,
-          'margin-left',
-          this.marginLeft + 'px'
-        );
+        this.marginLeftDrag = this.marginLeft;
       }
       this.isDrag = false;
-      setTimeout(() => {
-        // remove transitions to reconstruct slider
-        this.divSlides.classList.add('dirslider_noTransition');
-        this.putContent();
-      }, 400);
+      if (!this.isInline) {
+        setTimeout(() => {
+          // remove transitions to reconstruct slider
+          this.isAnimated = false;
+          this.divSlides.classList.add('dirslider_noTransition');
+          this.putContent();
+        }, 400);
+      }
     }
   }
 
@@ -340,6 +703,7 @@ export class SliderDirective implements OnInit {
     clearTimeout(this.timeOut);
     this.userStopAutoSlider = true;
     // move to screen
+    this.isAnimated = true;
     const nbDecalScreen = (this.currentSlide === 0) ? Number(index) + 1 : Number(index);
     this.marginLeft = (this.containerWidth.width * (nbDecalScreen)) * - 1;
     this.currentSlide = Number(index);
@@ -350,6 +714,7 @@ export class SliderDirective implements OnInit {
     );
     setTimeout(() => {
       // remove transitions to reconstruct slider
+      this.isAnimated = false;
       this.divSlides.classList.add('dirslider_noTransition');
       this.putContent();
     }, 400);
@@ -357,6 +722,7 @@ export class SliderDirective implements OnInit {
 
   processAutoSlide() {
     if (this.autoSlide && !this.userStopAutoSlider) {
+      this.isAnimated = true;
       this.currentSlide = ((this.currentSlide + 1) > this.nbSlides) ? 0 : this.currentSlide + 1;
 
       this.renderer.setStyle(
@@ -367,12 +733,61 @@ export class SliderDirective implements OnInit {
 
       setTimeout(() => {
         // remove transitions to reconstruct slider
+        this.isAnimated = false;
         this.divSlides.classList.add('dirslider_noTransition');
         this.putContent();
       }, 400);
     } else {
       clearTimeout(this.timeOut);
     }
+  }
+
+  processClickArrow(sens) {
+    // user move = stop autoSlide
+    clearTimeout(this.timeOut);
+    this.userStopAutoSlider = true;
+    // process move
+    this.isAnimated = true;
+    if (sens > 0) {
+      this.currentSlide = ((this.currentSlide - 1) >= 0) ? this.currentSlide - 1 : this.nbSlides;
+    }
+    if (sens < 0) {
+      this.currentSlide = ((this.currentSlide + 1) > this.nbSlides) ? 0 : this.currentSlide + 1;
+    }
+    if (!this.isVertical) {
+      this.marginLeftDrag = (this.marginLeft + (this.containerWidth.width * sens));
+    } else {
+      const decal = (this.verticalLimit > 0) ? this.verticalLimit : this.containerWidth.height;
+      this.marginLeftDrag = (this.marginLeft + (decal * sens));
+    }
+
+    if (this.isInline) {
+      // can't swipe out of bounds
+      this.marginLeftDrag = (this.marginLeftDrag > 0) ? 0 : this.marginLeftDrag;
+      if (!this.isVertical) {
+        this.marginLeftDrag = ((this.divSlides.offsetWidth - this.containerWidth.width + this.marginLeftDrag) < 0)
+        ? this.containerWidth.width - this.divSlides.offsetWidth
+        : this.marginLeftDrag;
+      } else {
+        this.marginLeftDrag = ((this.divSlides.offsetHeight - this.containerWidth.height + this.marginLeftDrag) < 0)
+        ? this.containerWidth.height - this.divSlides.offsetHeight
+        : this.marginLeftDrag;
+      }
+    }
+
+    const marginType = (!this.isVertical) ? 'margin-left' : 'margin-top';
+    this.renderer.setStyle(
+      this.divSlides,
+      marginType,
+      this.marginLeftDrag + 'px'
+    );
+
+    setTimeout(() => {
+      // remove transitions to reconstruct slider
+      this.isAnimated = false;
+      this.divSlides.classList.add('dirslider_noTransition');
+      this.putContent();
+    }, 400);
   }
 
 }
